@@ -120,5 +120,40 @@ public class UserProvider : ICRUD_Service<User, string>, IUserProvider
             Message = "Search completed"
         };
     }
+    public async Task<ResultService<IEnumerable<User>>> FilterDateRange(DateTime? startDate = null, DateTime? endDate = null)
+    {
+        var query = _collection.AsQueryable();
+        query = query.FilterByDateRange(startDate, endDate);
+        var results = await query.ToListAsync();
 
+        return new ResultService<IEnumerable<User>>
+        {
+            Data = results,
+            Code = "200",
+            Message = "Filtered by date range"
+        };
+    }
+
+    public async Task<ResultService<IEnumerable<User>>> Search(string? keyword = null, string? orderBy = null, DateTime? startDate = null, DateTime? endDate = null)
+    {
+        var query = _collection.AsQueryable();
+        // Apply search
+        if (!string.IsNullOrEmpty(keyword))
+        {
+            query = query.Search(keyword);
+        }
+
+        // Apply date range filter
+        query = query.FilterByDateRange(startDate, endDate);
+
+        // Apply sorting
+        query = query.Sort(orderBy); var results = await query.ToListAsync();
+
+        return new ResultService<IEnumerable<User>>
+        {
+            Data = results,
+            Code = "200",
+            Message = "Filtered by date range"
+        };
+    }
 }

@@ -80,5 +80,21 @@ public class UserController : ControllerBase
         return result.Code == "0" ? Ok(result) : NotFound(result);
     }
 
+    [HttpGet("FilterByDate")]
+    public async Task<IActionResult> FilterByDate([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+    {
+        var result = await _userProvider.FilterDateRange(startDate: startDate, endDate: endDate);
+        return result.Code == "200" ? Ok(result) : NotFound(result);
+    }
 
+    [HttpGet("Search")]
+    public async Task<IActionResult> Search(
+    [FromQuery] string? keyword = null,
+    [FromQuery] string? orderBy = null,
+    [FromQuery] DateTime? startDate = null,
+    [FromQuery] DateTime? endDate = null)
+    {
+        var result = await _userProvider.Search(keyword, orderBy, startDate, endDate);
+        return result.Code == "200" ? Ok(result) : NotFound(result);
+    }
 }
