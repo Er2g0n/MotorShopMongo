@@ -5,7 +5,7 @@ using Structure_Context;
 using Structure_Core.BaseClass;
 using Structure_Core.Extensions;
 using Structure_Core.TransactionManagement;
-using Structure_Core.User;
+using Structure_Core.UserManagement;
 using Structure_Interface.IBaseServices;
 using Structure_Interface.IUserManagement;
 

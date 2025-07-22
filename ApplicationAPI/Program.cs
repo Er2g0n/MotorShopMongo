@@ -1,7 +1,7 @@
 ﻿
 using Structure_Context;
 using Structure_Core.TransactionManagement;
-using Structure_Core.User;
+using Structure_Core.UserManagement;
 using Structure_Interface.IBaseServices;
 using Structure_Interface.IUserManagement;
 using Structure_Service.TransactionManagement;

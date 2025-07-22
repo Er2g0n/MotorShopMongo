@@ -1,7 +1,7 @@
 ﻿
 
 
-namespace Structure_Core.User;
+namespace Structure_Core.UserManagement;
 public class User : BaseClass.BaseClass
 {
     public string FirstName { get; set; } = string.Empty;

@@ -1,5 +1,5 @@
 ﻿using Structure_Core.BaseClass;
-using Structure_Core.User;
+using Structure_Core.UserManagement;
 
 
 namespace Structure_Interface.IUserManagement;

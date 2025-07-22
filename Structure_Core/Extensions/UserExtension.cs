@@ -1,9 +1,9 @@
-﻿using Structure_Core.User;
+﻿using Structure_Core.UserManagement;
 
 namespace Structure_Core.Extensions;
 public static class UserExtension
 {
-    public static IQueryable<Structure_Core.User.User> Sort(this IQueryable<Structure_Core.User.User> query, string? orderBy)
+    public static IQueryable<User> Sort(this IQueryable<User> query, string? orderBy)
     {
         if (string.IsNullOrWhiteSpace(orderBy))
             return query.OrderBy(u => u.ID); // default sort
@@ -39,7 +39,7 @@ public static class UserExtension
 
         return query;
     }
-    public static IQueryable<Structure_Core.User.User> Search(this IQueryable<Structure_Core.User.User> query, string keyword)
+    public static IQueryable<User> Search(this IQueryable<User> query, string keyword)
     {
         if (string.IsNullOrWhiteSpace(keyword))
             return query;
@@ -49,7 +49,7 @@ public static class UserExtension
                                 u.LastName.ToLower().Contains(lowerKeyword) ||
                                 u.Email.ToLower().Contains(lowerKeyword));
     }
-    public static IQueryable<Structure_Core.User.User> FilterByDateRange(this IQueryable<Structure_Core.User.User> query, DateTime? startDate, DateTime? endDate)
+    public static IQueryable<User> FilterByDateRange(this IQueryable<User> query, DateTime? startDate, DateTime? endDate)
     {
         if (startDate.HasValue && endDate.HasValue)
         {
