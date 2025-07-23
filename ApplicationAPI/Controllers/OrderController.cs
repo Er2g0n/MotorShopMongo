@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Structure_Core.TransactionManagement;
 using Structure_Interface.IBaseServices;
-using Structure_Interface.ITransactionManagement;
-using Structure_Service.TransactionManagement;
+using Structure_Interface.ITransactionService;
 
 namespace ApplicationAPI.Controllers;
 [ApiController]
@@ -10,11 +9,11 @@ namespace ApplicationAPI.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly ICRUD_Service<Order, string> _service;
-    //private readonly IOrderProvider _orderProvider;
-    public OrderController(ICRUD_Service<Order,string> service )
+    private readonly IOrderProvider _orderProvider;
+    public OrderController(ICRUD_Service<Order,string> service, IOrderProvider orderProvider )
     {
         _service = service;
-        //_orderProvider = orderProvider;
+        _orderProvider = orderProvider;
     }
     [HttpGet]
     [Consumes("application/json")]
@@ -65,6 +64,16 @@ public class OrderController : ControllerBase
             return NotFound(result);
 
         return Ok(result);
+    }
+    [HttpGet("Search")]
+        public async Task<IActionResult> Search(
+        [FromQuery] string? keyword = null,
+        [FromQuery] string? orderBy = null,
+        [FromQuery] DateTime? startDate = null,
+        [FromQuery] DateTime? endDate = null)
+            {
+        var result = await _orderProvider.Search(keyword, orderBy, startDate, endDate);
+        return result.Code == "200" ? Ok(result) : NotFound(result);
     }
 
 }

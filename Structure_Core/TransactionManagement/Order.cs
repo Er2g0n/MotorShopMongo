@@ -11,6 +11,6 @@ public class Order : BaseClass.BaseClass
     public string OrderNumber { get; set; } = string.Empty;
     public string CustomerID { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; } = DateTime.Now;
-    public List<OrderItem> Items { get; set; } = new(); // ✅ Chuỗi các dữ liệu
     public decimal TotalAmount { get; set; }
+    public List<OrderItem> Items { get; set; } = new(); // ✅ Chuỗi các dữ liệu
 }

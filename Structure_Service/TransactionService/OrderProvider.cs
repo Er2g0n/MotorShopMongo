@@ -1,15 +1,19 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using Structure_Context;
 using Structure_Core.BaseClass;
+using Structure_Core.Extensions;
 using Structure_Core.TransactionManagement;
+using Structure_Core.UserManagement;
 using Structure_Interface.IBaseServices;
+using Structure_Interface.ITransactionService;
 
 
-namespace Structure_Service.TransactionManagement;
-public class OrderProvider : ICRUD_Service<Order, string>
+namespace Structure_Service.TransactionService;
+public class OrderProvider : ICRUD_Service<Order, string>, IOrderProvider
 {
-    private readonly IMongoCollection<Order> _collection;
     private readonly MongoDBContext _mongoContext;
+    private readonly IMongoCollection<Order> _collection;
 
     public OrderProvider(MongoDBContext mongoContext)
     {
@@ -36,7 +40,7 @@ public class OrderProvider : ICRUD_Service<Order, string>
         entity.ID = null;
         entity.CreatedDate = DateTime.Now;
         entity.UpdatedDate = DateTime.Now;
-        if(entity.Items != null && entity.Items.Count > 0)
+        if (entity.Items != null && entity.Items.Count > 0)
         {
             foreach (var item in entity.Items)
             {
@@ -73,5 +77,26 @@ public class OrderProvider : ICRUD_Service<Order, string>
 
         return new ResultService<Order> { Data = null, Code = "200", Message = "Deleted successfully" };
     }
+    public async Task<ResultService<IEnumerable<Order>>> Search(string? keyword = null, string? orderBy = null, DateTime? startDate = null, DateTime? endDate = null)
+    {
+        var query = _collection.AsQueryable();
+        // Apply search
+        if (!string.IsNullOrEmpty(keyword))
+        {
+            query = query.Search(keyword);
+        }
 
+        // Apply date range filter
+        query = query.FilterByDateRange(startDate, endDate);
+
+        // Apply sorting
+        query = query.Sort(orderBy); var results = await query.ToListAsync();
+
+        return new ResultService<IEnumerable<Order>>
+        {
+            Data = results,
+            Code = "200",
+            Message = "Filtered by date range"
+        };
+    }
 }
