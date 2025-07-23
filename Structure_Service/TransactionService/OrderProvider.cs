@@ -29,9 +29,9 @@ public class OrderProvider : ICRUD_Service<Order, string>, IOrderProvider
     {
         var order = await _collection.Find(x => x.ID == ID).FirstOrDefaultAsync();
         if (order == null)
-            return new ResultService<Order> { Data = null, Code = "404", Message = "Order not found" };
+            return new ResultService<Order> { Data = null, Code = "1", Message = "Order not found" };
 
-        return new ResultService<Order> { Data = order, Code = "200", Message = "Success" };
+        return new ResultService<Order> { Data = order, Code = "0", Message = "Success" };
     }
 
 
@@ -50,14 +50,14 @@ public class OrderProvider : ICRUD_Service<Order, string>, IOrderProvider
             }
         }
         await _collection.InsertOneAsync(entity);
-        return new ResultService<Order> { Data = entity, Code = "200", Message = "Created successfully" };
+        return new ResultService<Order> { Data = entity, Code = "0", Message = "Success" };
     }
 
     public async Task<ResultService<Order>> Update(Order entity)
     {
         var existingOrder = await _collection.Find(x => x.ID == entity.ID).FirstOrDefaultAsync();
         if (existingOrder == null)
-            return new ResultService<Order> { Data = null, Code = "404", Message = "Order not found" };
+            return new ResultService<Order> { Data = null, Code = "1", Message = "Order not found" };
 
         // Giữ nguyên CreatedBy & CreatedDate
         entity.CreatedBy = existingOrder.CreatedBy;
@@ -67,15 +67,15 @@ public class OrderProvider : ICRUD_Service<Order, string>, IOrderProvider
         entity.UpdatedDate = DateTime.Now;
         await _collection.ReplaceOneAsync(x => x.ID == entity.ID, entity);
 
-        return new ResultService<Order> { Data = entity, Code = "200", Message = "Updated successfully" };
+        return new ResultService<Order> { Data = entity, Code = "0", Message = "Success" };
     }
     public async Task<ResultService<Order>> Delete(string ID)
     {
         var result = await _collection.DeleteOneAsync(x => x.ID == ID);
         if (result.DeletedCount == 0)
-            return new ResultService<Order> { Data = null, Code = "404", Message = "Order not found" };
+            return new ResultService<Order> { Data = null, Code = "1", Message = "Order not found" };
 
-        return new ResultService<Order> { Data = null, Code = "200", Message = "Deleted successfully" };
+        return new ResultService<Order> { Data = null, Code = "0", Message = "Success" };
     }
     public async Task<ResultService<IEnumerable<Order>>> Search(string? keyword = null, string? orderBy = null, DateTime? startDate = null, DateTime? endDate = null)
     {
@@ -95,8 +95,8 @@ public class OrderProvider : ICRUD_Service<Order, string>, IOrderProvider
         return new ResultService<IEnumerable<Order>>
         {
             Data = results,
-            Code = "200",
-            Message = "Filtered by date range"
+            Code = "0",
+            Message = "Success"
         };
     }
 }
