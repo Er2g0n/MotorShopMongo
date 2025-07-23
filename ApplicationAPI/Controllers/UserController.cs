@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Structure_Core.UserManagement;
 using Structure_Interface.IBaseServices;
-using Structure_Interface.IUserManagement;
-using Structure_Service.UserManagement;
+using Structure_Interface.IUserService;
 
 namespace ApplicationAPI.Controllers;
 
@@ -27,7 +26,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _service.GetAll();
-        return result == null ? BadRequest("No user found"): Ok(result);
+        return result.Code == "0" ? Ok(result) : BadRequest(result);
     }
 
     [HttpGet("{id}")]
@@ -84,7 +83,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> FilterByDate([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
     {
         var result = await _userProvider.FilterDateRange(startDate: startDate, endDate: endDate);
-        return result.Code == "200" ? Ok(result) : NotFound(result);
+        return result.Code == "0" ? Ok(result) : NotFound(result);
     }
 
     [HttpGet("Search")]
@@ -95,6 +94,12 @@ public class UserController : ControllerBase
     [FromQuery] DateTime? endDate = null)
     {
         var result = await _userProvider.Search(keyword, orderBy, startDate, endDate);
-        return result.Code == "200" ? Ok(result) : NotFound(result);
+        return result.Code == "0" ? Ok(result) : NotFound(result);
+    }
+    [HttpGet("FilterByProduct")]
+    public async Task<IActionResult> FilterByProduct([FromQuery] string productId)
+    {
+        var result = await _userProvider.FilterUsersByProduct(productId);
+        return result.Code == "0" ? Ok(result) : NotFound(result);
     }
 }

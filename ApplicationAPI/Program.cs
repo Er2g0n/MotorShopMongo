@@ -1,11 +1,14 @@
 ﻿
 using Structure_Context;
+using Structure_Core.ProductManagement;
 using Structure_Core.TransactionManagement;
 using Structure_Core.UserManagement;
 using Structure_Interface.IBaseServices;
-using Structure_Interface.IUserManagement;
-using Structure_Service.TransactionManagement;
-using Structure_Service.UserManagement;
+using Structure_Interface.ITransactionService;
+using Structure_Interface.IUserService;
+using Structure_Service.ProductService;
+using Structure_Service.TransactionService;
+using Structure_Service.UserService;
 
 namespace ApplicationAPI;
 
@@ -26,9 +29,13 @@ public class Program
         builder.Services.AddSingleton<MongoDBContext>(provider =>
             new MongoDBContext(builder.Configuration));
 
+        //ProductProvider
+        builder.Services.AddTransient<ICRUD_Service<Product, string>, ProductProvider>();
+
+        // TransactionProvider
         // OrderProvider
         builder.Services.AddTransient<ICRUD_Service<Order, string>, OrderProvider>();
-        //builder.Services.AddTransient<IOrderProvider, OrderProvider>();
+        builder.Services.AddTransient<IOrderProvider, OrderProvider>();
 
         // UserProvider
         builder.Services.AddTransient<ICRUD_Service<User, string>, UserProvider>();
