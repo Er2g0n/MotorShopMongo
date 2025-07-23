@@ -30,13 +30,13 @@ public class UserProvider : ICRUD_Service<User, string>, IUserProvider
     {
         var customers = await _userCollection.Find(_ => true).ToListAsync();
 
-        return new ResultService<IEnumerable<User>> { Data = customers, Code = "200", Message = "Success" };
+        return new ResultService<IEnumerable<User>> { Data = customers, Code = "0", Message = "Success" };
     }
     public async Task<ResultService<User>> Get(string ID)
     {
         var user = await _userCollection.Find(x => x.ID == ID).FirstOrDefaultAsync();
         if (user == null)
-            return new ResultService<User> { Data = null, Code = "404", Message = "User not found" };
+            return new ResultService<User> { Data = null, Code = "1", Message = "User not found" };
 
         return new ResultService<User> { Data = user, Code = "0", Message = "Success" };
     }
@@ -47,7 +47,7 @@ public class UserProvider : ICRUD_Service<User, string>, IUserProvider
         entity.CreatedDate = DateTime.Now;
         entity.UpdatedDate = DateTime.Now;
         await _userCollection.InsertOneAsync(entity);
-        return new ResultService<User> { Data = entity, Code = "0", Message = "Created successfully" };
+        return new ResultService<User> { Data = entity, Code = "0", Message = "Success" };
     }
 
     public async Task<ResultService<User>> Update(User entity)
@@ -55,7 +55,7 @@ public class UserProvider : ICRUD_Service<User, string>, IUserProvider
         //Lấy dữ liệu gốc từ DB
         var existingUser = await _userCollection.Find(x => x.ID == entity.ID).FirstOrDefaultAsync();
         if (existingUser == null)
-            return new ResultService<User> { Data = null, Code = "404", Message = "User not found" };
+            return new ResultService<User> { Data = null, Code = "1", Message = "User not found" };
 
         // Giữ nguyên CreatedBy & CreatedDate
         entity.CreatedBy = existingUser.CreatedBy;
@@ -66,17 +66,17 @@ public class UserProvider : ICRUD_Service<User, string>, IUserProvider
         entity.UpdatedDate = DateTime.Now;
         await _userCollection.ReplaceOneAsync(x => x.ID == entity.ID, entity);
 
-        return new ResultService<User> { Data = entity, Code = "0", Message = "Updated successfully" };
+        return new ResultService<User> { Data = entity, Code = "0", Message = "Success" };
 
     }
 
     public async Task<ResultService<User>> Delete(string ID)
     {
         var result = await _userCollection.DeleteOneAsync(x => x.ID == ID);
-        if (result.DeletedCount == 0)
-            return new ResultService<User> { Data = null, Code = "404", Message = "User not found" };
+        if (result.DeletedCount == 0)   
+            return new ResultService<User> { Data = null, Code = "1", Message = "User not found" };
 
-        return new ResultService<User> { Data = null, Code = "0", Message = "Deleted successfully" };
+        return new ResultService<User> { Data = null, Code = "0", Message = "Success" };
     }
 
     public async Task<ResultService<IEnumerable<User>>> MongoSearch(string keyword)
@@ -104,7 +104,7 @@ public class UserProvider : ICRUD_Service<User, string>, IUserProvider
         {
             Data = result,
             Code = "0",
-            Message = "Filtered success"
+            Message = "Success"
         };
     }
 
@@ -123,7 +123,7 @@ public class UserProvider : ICRUD_Service<User, string>, IUserProvider
         {
             Data = results,
             Code = "0",
-            Message = "Search completed"
+            Message = "Success"
         };
     }
     public async Task<ResultService<IEnumerable<User>>> FilterDateRange(DateTime? startDate = null, DateTime? endDate = null)
@@ -163,22 +163,6 @@ public class UserProvider : ICRUD_Service<User, string>, IUserProvider
         };
     }
 
-    //public async Task<ResultService<IEnumerable<User>>> FilterUsersByProduct(string productId)
-    //{
-    //    var orders = await _orderCollection
-    //        .Find(o => o.Items.Any(item => item.ProductID == productId))
-    //        .ToListAsync();
-
-    //    var userIds = orders.Select(o => o.CustomerID).Distinct().ToList();
-    //    var users = await _userCollection.Find(u => userIds.Contains(u.ID)).ToListAsync();
-
-    //    return new ResultService<IEnumerable<User>>
-    //    {
-    //        Data = users,
-    //        Code = "0",
-    //        Message = "Filtered users by product"
-    //    };
-    //}
     public async Task<ResultService<IEnumerable<User>>> FilterUsersByProduct(string productId)
     {
         ResultService<IEnumerable<User>> result = new();
