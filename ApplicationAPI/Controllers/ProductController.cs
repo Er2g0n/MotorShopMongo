@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Structure_Core.ProductManagement;
 using Structure_Interface.IBaseServices;
+using static ApplicationAPI.Utilities.ApiResponseHelper;
 
 namespace ApplicationAPI.Controllers;
 [ApiController]
@@ -13,11 +14,10 @@ public class ProductController : ControllerBase
         _service = service;
     }
     [HttpGet]
-    [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetAll()
     {
         var result = await _service.GetAll();
-        return result == null ? BadRequest("No products found") : Ok(result);
+        return HandleResult(result, this);
     }
 }

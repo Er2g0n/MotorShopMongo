@@ -2,6 +2,7 @@
 using Structure_Core.TransactionManagement;
 using Structure_Interface.IBaseServices;
 using Structure_Interface.ITransactionService;
+using static ApplicationAPI.Utilities.ApiResponseHelper;
 
 namespace ApplicationAPI.Controllers;
 [ApiController]
@@ -16,23 +17,18 @@ public class OrderController : ControllerBase
         _orderProvider = orderProvider;
     }
     [HttpGet]
-    [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> GetAll()
-    {
-        var result = await _service.GetAll();
-        return result == null ? BadRequest("No order found") : Ok(result);
-    }
+    public async Task<IActionResult> GetAll() => HandleResult(await _service.GetAll(), this);
+    
 
-    [HttpGet("{id}")]
-    [Consumes("application/json")]
+    [HttpGet("{ID}")]
     [Produces("application/json")]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(string ID)
     {
-        var result = await _service.Get(id);
+        var result = await _service.Get(ID);
         if (result.Data == null)
             return NotFound(result);
-        return Ok(result);
+        return HandleResult(result, this);
     }
     [HttpPost]
     [Consumes("application/json")]
@@ -40,7 +36,7 @@ public class OrderController : ControllerBase
     public async Task<IActionResult> Create([FromBody] Order order)
     {
         var result = await _service.Create(order);
-        return Ok(result);
+        return HandleResult(result, this);
     }
 
     [HttpPut]
@@ -51,19 +47,18 @@ public class OrderController : ControllerBase
         var result = await _service.Update(order);
         if (result.Data == null)
             return NotFound(result);
-        return Ok(result);
+        return HandleResult(result, this);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{ID}")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(string ID)
     {
-        var result = await _service.Delete(id);
+        var result = await _service.Delete(ID);
         if (result.Data == null)
             return NotFound(result);
-
-        return Ok(result);
+        return HandleResult(result, this);
     }
     [HttpGet("Search")]
         public async Task<IActionResult> Search(
@@ -73,7 +68,7 @@ public class OrderController : ControllerBase
         [FromQuery] DateTime? endDate = null)
             {
         var result = await _orderProvider.Search(keyword, orderBy, startDate, endDate);
-        return result.Code == "200" ? Ok(result) : NotFound(result);
+        return HandleResult(result, this);
     }
 
 }

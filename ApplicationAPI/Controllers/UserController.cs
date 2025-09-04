@@ -2,6 +2,7 @@
 using Structure_Core.UserManagement;
 using Structure_Interface.IBaseServices;
 using Structure_Interface.IUserService;
+using static ApplicationAPI.Utilities.ApiResponseHelper;
 
 namespace ApplicationAPI.Controllers;
 
@@ -21,22 +22,17 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    [Consumes("application/json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _service.GetAll();
-        return result.Code == "0" ? Ok(result) : BadRequest(result);
+        return HandleResult(await _service.GetAll(), this);
     }
 
-    [HttpGet("{id}")]
-    [Consumes("application/json")]
+    [HttpGet("{ID}")]
     [Produces("application/json")]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(string ID)
     {
-        var result = await _service.Get(id);
-        return result.Code == "0" ? Ok(result) : NotFound(result);
-
+        return HandleResult(await _service.Get(ID), this);
     }
 
     [HttpPost]
@@ -44,8 +40,7 @@ public class UserController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Create(User user)
     {
-        var result = await _service.Create(user);
-        return result.Code == "0" ? Ok(result) : NotFound(result);
+        return HandleResult(await _service.Create(user), this);
     }
 
     [HttpPut]
@@ -53,53 +48,46 @@ public class UserController : ControllerBase
     [Produces("application/json")]
     public async Task<IActionResult> Update(User user)
     {
-        var result = await _service.Update(user);
-        return result.Code == "0" ? Ok(result) : NotFound(result);
-
+        return HandleResult(await _service.Update(user), this);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{ID}")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(string ID)
     {
-        var result = await _service.Delete(id);
-        return result.Code == "0"? Ok(result) : NotFound(result) ;
+        return HandleResult(await _service.Delete(ID), this);
     }
     [HttpGet("MongoSearch")]
     public async Task<IActionResult> MongoSearch([FromQuery] string? keyword = null)
     {
-        var result = await _userProvider.MongoSearch(keyword);
-        return result.Code == "0" ? Ok(result) : NotFound(result);
+        return HandleResult(await _userProvider.MongoSearch(keyword), this);
     }
     [HttpGet("LinqSearch")]
-    public async Task<IActionResult> LinqSearch([FromQuery] string? keyword = null, [FromQuery] string? orderByDescending = null)
+    public async Task<IActionResult> LinqSearch([FromQuery] string? keyword = null, [FromQuery] string? orderBy = null)
     {
-        var result = await _userProvider.LinqSearch(keyword, orderByDescending);
-        return result.Code == "0" ? Ok(result) : NotFound(result);
+        return HandleResult(await _userProvider.LinqSearch(keyword, orderBy), this);
     }
 
     [HttpGet("FilterByDate")]
     public async Task<IActionResult> FilterByDate([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
     {
-        var result = await _userProvider.FilterDateRange(startDate: startDate, endDate: endDate);
-        return result.Code == "0" ? Ok(result) : NotFound(result);
+        return HandleResult(await _userProvider.FilterDateRange(startDate: startDate, endDate: endDate), this);
     }
 
     [HttpGet("Search")]
     public async Task<IActionResult> Search(
-    [FromQuery] string? keyword = null,
     [FromQuery] string? orderBy = null,
+    [FromQuery] string? keyword = null,
     [FromQuery] DateTime? startDate = null,
     [FromQuery] DateTime? endDate = null)
     {
-        var result = await _userProvider.Search(keyword, orderBy, startDate, endDate);
-        return result.Code == "0" ? Ok(result) : NotFound(result);
+    
+        return HandleResult(await _userProvider.Search(keyword, orderBy, startDate, endDate), this);
     }
     [HttpGet("FilterByProduct")]
     public async Task<IActionResult> FilterByProduct([FromQuery] string productId)
     {
-        var result = await _userProvider.FilterUsersByProduct(productId);
-        return result.Code == "0" ? Ok(result) : NotFound(result);
+        return HandleResult(await _userProvider.FilterUsersByProduct(productId), this);
     }
 }
