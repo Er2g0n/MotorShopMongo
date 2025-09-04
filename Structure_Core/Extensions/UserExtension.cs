@@ -6,8 +6,8 @@ public static class UserExtension
     public static IQueryable<User> Sort(this IQueryable<User> query, string? orderBy)
     {
         if (string.IsNullOrWhiteSpace(orderBy))
-            return query.OrderBy(u => u.ID); // default sort
-                                             // Convert to lowercase for case-insensitive comparison
+            return query.OrderBy(u => u.ID); 
+                                             
         string lowerOrderBy = orderBy.ToLower();
 
         // Explicit sorting with "asc" and "desc" suffixes
